@@ -1,12 +1,15 @@
 import os
 from openai import OpenAI
 import base64
+from uuid import uuid4
 import json
 import time
 import simpleaudio as sa
 import errno
-from elevenlabs import generate, play, voices
+from elevenlabs import generate, play
+from dotenv import load_dotenv
 
+load_dotenv()
 client = OpenAI()
 
 
@@ -24,17 +27,12 @@ def encode_image(image_path):
 
 
 def play_audio(text):
-    audio = generate(text=text, voice="ENfvYmv6CRqDodDZTieQ", model="eleven_turbo_v2")
+    import sounddevice as sd
+    import soundfile as sf
 
-    unique_id = base64.urlsafe_b64encode(os.urandom(30)).decode("utf-8").rstrip("=")
-    dir_path = os.path.join("narration", unique_id)
-    os.makedirs(dir_path, exist_ok=True)
-    file_path = os.path.join(dir_path, "audio.wav")
+    audio = generate(text=text, voice="2EiwWnXFnvU5JabPnv8n", model="eleven_turbo_v2")
 
-    with open(file_path, "wb") as f:
-        f.write(audio)
-
-    play(audio)
+    play(audio, use_ffmpeg=False)
 
 
 def generate_new_line(base64_image):
